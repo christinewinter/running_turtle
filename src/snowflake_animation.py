@@ -30,7 +30,7 @@ def write_text(turtle, text="", pos=(0, 0), color="snow", font=("Sahadeva", 30, 
 
 def draw():
     screen.setup(width, height)
-    screen.bgpic(backgroung_picture)
+    screen.bgpic(background_picture)
     screen.title(headline_text)
 
     # Write text
@@ -77,7 +77,7 @@ def draw():
             screen.bye()
 
 
-backgroung_picture = "img/reduced_icy_pic.gif"
+background_picture = "img/reduced_icy_pic.gif"
 headline_text = "Frosty Greetings"
 greetings_text = "Sends you"
 signature_text = "Christine Winter"
