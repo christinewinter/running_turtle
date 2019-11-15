@@ -28,7 +28,7 @@ def write_text(turtle, text="", pos=(0, 0), color="snow", font=("Sahadeva", 30, 
     turtle.hideturtle()
 
 
-def draw():
+def draw(save_to_file=False, quit_time=30):
     screen.setup(width, height)
     screen.bgpic(background_picture)
     screen.title(headline_text)
@@ -58,6 +58,9 @@ def draw():
     # Draw snowballs until exit signal
     keep_drawing = True
 
+    if save_to_file:
+        save()
+
     while keep_drawing:
         if time.time() - start_time > snowball_time_delay:
             list_of_snowballs.append(place_snowball(width, height, snowball_size, turtle.Turtle()))
@@ -72,9 +75,17 @@ def draw():
 
         screen.update()
 
-        if time.time() - absolute_start_time > 30:
+        if time.time() - absolute_start_time > quit_time:
             keep_drawing = False
             screen.bye()
+
+
+def save(counter=[1]):
+    # screen.getcanvas().postscript(file = file_name.format(counter[0]))
+    counter[0] += 1
+    if running:
+        screen.getcanvas().postscript(file=file_name.format(counter[0]))
+        screen.ontimer(save, int(1000 / FRAMES_PER_SECOND))
 
 
 background_picture = "img/reduced_icy_pic.gif"
@@ -84,8 +95,12 @@ signature_text = "Christine Winter"
 
 # Set up screen
 width = 600
-height = 450
+height = 420
 screen = turtle.Screen()
 file_name = "res/winter_greetings{0:03d}.eps"
 
-draw()
+# Recording settings
+running = True
+FRAMES_PER_SECOND = 10
+
+draw(save_to_file=False, quit_time=10)
