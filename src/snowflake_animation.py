@@ -2,6 +2,8 @@
 import turtle
 import random
 import time
+from PIL import Image
+import io
 
 
 def place_snowball(screen_width, screen_height, snowball_size, snowball):
@@ -28,7 +30,7 @@ def write_text(turtle, text="", pos=(0, 0), color="snow", font=("Sahadeva", 30, 
     turtle.hideturtle()
 
 
-def draw(save_to_file=False, quit_time=30):
+def draw(images, quit_time=30):
     screen.setup(width, height)
     screen.bgpic(background_picture)
     screen.title(headline_text)
@@ -58,9 +60,6 @@ def draw(save_to_file=False, quit_time=30):
     # Draw snowballs until exit signal
     keep_drawing = True
 
-    if save_to_file:
-        save()
-
     while keep_drawing:
         if time.time() - start_time > snowball_time_delay:
             list_of_snowballs.append(place_snowball(width, height, snowball_size, turtle.Turtle()))
@@ -68,24 +67,26 @@ def draw(save_to_file=False, quit_time=30):
             snowball_time_delay = random.randint(*snowball_rate) / 50
 
         for snowball in list_of_snowballs:
-            move_snowball(snowball, falling_speed=.9)
+            move_snowball(snowball, falling_speed=5)
             if snowball.ycor() < -height / 2:
                 snowball.clear()
                 place_snowball(width, height, snowball_size, snowball)
 
         screen.update()
+        save(images)
 
         if time.time() - absolute_start_time > quit_time:
             keep_drawing = False
             screen.bye()
 
 
-def save(counter=[1]):
-    # screen.getcanvas().postscript(file = file_name.format(counter[0]))
+def save(images, counter=[1]):
+    cv = screen.getcanvas()
+    ps = cv.postscript(colormode='color')
+    image = Image.open(io.BytesIO(ps.encode('utf-8')))
+    image.thumbnail((width/2, height/3), Image.PERSPECTIVE)  # TODO size optimization
+    images.append(image)
     counter[0] += 1
-    if running:
-        screen.getcanvas().postscript(file=file_name.format(counter[0]))
-        screen.ontimer(save, int(1000 / FRAMES_PER_SECOND))
 
 
 background_picture = "img/reduced_icy_pic.gif"
@@ -97,10 +98,14 @@ signature_text = "Christine Winter"
 width = 600
 height = 420
 screen = turtle.Screen()
-file_name = "res/winter_greetings{0:03d}.eps"
+final_gif = "out/winter.gif"
 
 # Recording settings
 running = True
-FRAMES_PER_SECOND = 10
+FRAMES_PER_SECOND = 1
+images = []
 
-draw(save_to_file=False, quit_time=10)
+draw(images, quit_time=50)
+print(f"Recorded frames: {len(images)}")
+
+images[0].save(final_gif, save_all=True, append_images=images[1:], quality=100, loop=0)
