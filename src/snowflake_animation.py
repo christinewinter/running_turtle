@@ -9,7 +9,7 @@ import io
 def place_snowball(screen_width, screen_height, snowball_size, snowball):
     snowball.color("snow")
     snowball.penup()
-    snowball.setposition(random.randint(-2 * screen_width, screen_width / 2), screen_height / 2)
+    snowball.setposition(random.randint(-1 * screen_width / 2, screen_width / 2), screen_height / 2)
     snowball.hideturtle()
     snowball.size = random.randint(*snowball_size)
     return snowball
@@ -101,8 +101,6 @@ screen = turtle.Screen()
 final_gif = "out/winter.gif"
 
 # Recording settings
-running = True
-FRAMES_PER_SECOND = 1
 images = []
 
 draw(images, quit_time=50)
